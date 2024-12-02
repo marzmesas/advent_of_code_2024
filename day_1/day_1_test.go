@@ -1,1 +1,1 @@
-package day_1
+package main

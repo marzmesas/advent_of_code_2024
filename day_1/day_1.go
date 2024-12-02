@@ -1,4 +1,4 @@
-package day_1
+package main
 
 import (
 	"bufio"
@@ -11,7 +11,7 @@ import (
 func read_input_lists(filename string) ([]int, []int, error) {
 
 	// Open the input file
-	file, err := os.Open("input.txt")
+	file, err := os.Open("day_1/input.txt")
 	if err != nil {
 		fmt.Printf("Failed to open file: %v\n", err)
 		return nil, nil, fmt.Errorf("failed to open file: %w", err)
@@ -57,4 +57,15 @@ func read_input_lists(filename string) ([]int, []int, error) {
 		return nil, nil, fmt.Errorf("error reading file: %w", err)
 	}
 	return column1, column2, nil
+}
+
+func main() {
+	column1, column2, err := read_input_lists("input.txt")
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Column 1: %v\n", column1)
+	fmt.Printf("Column 2: %v\n", column2)
 }
