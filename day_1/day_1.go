@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -65,7 +66,8 @@ func main() {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
-
+	sort.Ints(column1)
+	sort.Ints(column2)
 	fmt.Printf("Column 1: %v\n", column1)
 	fmt.Printf("Column 2: %v\n", column2)
 }
