@@ -9,6 +9,13 @@ import (
 	"strings"
 )
 
+func absInt(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
 func read_input_lists(filename string) ([]int, []int, error) {
 
 	// Open the input file
@@ -68,6 +75,15 @@ func main() {
 	}
 	sort.Ints(column1)
 	sort.Ints(column2)
-	fmt.Printf("Column 1: %v\n", column1)
-	fmt.Printf("Column 2: %v\n", column2)
+	var output = 0
+	var val = 0
+	for i := 0; i < len(column1); i++ {
+		val = column1[i] - column2[i]
+		output += absInt(val)
+	}
+
+	fmt.Printf("Column 1: %v\n", len(column1))
+	fmt.Printf("Column 2: %v\n", len(column2))
+	fmt.Printf("Output: %v\n", output)
+
 }
