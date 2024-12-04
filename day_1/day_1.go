@@ -16,7 +16,7 @@ func absInt(x int) int {
 	return x
 }
 
-func read_input_lists(filename string) ([]int, []int, error) {
+func readInputLists(filename string) ([]int, []int, error) {
 
 	// Open the input file
 	file, err := os.Open("day_1/input.txt")
@@ -67,12 +67,26 @@ func read_input_lists(filename string) ([]int, []int, error) {
 	return column1, column2, nil
 }
 
+func countOccurrences(slice []int, target int) int {
+	count := 0
+	for _, value := range slice {
+		if value == target {
+			count++
+		}
+	}
+	return count
+}
+
 func main() {
-	column1, column2, err := read_input_lists("input.txt")
+
+	column1, column2, err := readInputLists("input.txt")
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
+
+	// part 1
+
 	sort.Ints(column1)
 	sort.Ints(column2)
 	var output = 0
@@ -85,5 +99,13 @@ func main() {
 	fmt.Printf("Column 1: %v\n", len(column1))
 	fmt.Printf("Column 2: %v\n", len(column2))
 	fmt.Printf("Output: %v\n", output)
+
+	// part 2
+	var output2 = 0
+	for i := 0; i < len(column1); i++ {
+		val2 := countOccurrences(column2, column1[i]) //Revisit, right now big o is o(n)^2
+		output2 += column1[i] * val2
+	}
+	fmt.Printf("Output 2: %v\n", output2)
 
 }
