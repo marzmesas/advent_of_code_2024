@@ -54,6 +54,7 @@ func absInt(x int) int {
 	return x
 }
 
+// part 1
 func checkIncreasing(row []int) bool {
 	for i := 0; i < len(row)-1; i++ {
 		j := i + 1
@@ -102,6 +103,60 @@ func checkSafety(row []int) bool {
 	return result
 }
 
+//part 2
+
+func checkIncreasingPt2(row []int, modif_element int) bool {
+	for i := 0; i < len(row)-1; i++ {
+		j := i + 1
+		if (absInt(row[i]-row[j]) > 3 && modif_element == 1) || (absInt(row[i]-row[j]) < 1 && modif_element == 1) {
+			return false
+		} else if (absInt(row[i]-row[j]) > 3 && modif_element == 0) || (absInt(row[i]-row[j]) < 1 && modif_element == 0) {
+			modif_element += 1
+		} else if row[j] < row[i] && modif_element == 1 {
+			return false
+		} else if row[j] < row[i] && modif_element == 0 {
+			modif_element += 1
+		}
+
+	}
+	return true
+}
+
+func checkDecreasingPt2(row []int, modif_element int) bool {
+
+	for i := 0; i < len(row)-1; i++ {
+		j := i + 1
+		if absInt(row[i]-row[j]) > 3 || absInt(row[i]-row[j]) < 1 {
+			return false
+		}
+		if row[j] > row[i] {
+			return false
+		}
+
+	}
+	return true
+}
+
+func checkSafetyPt2(row []int) bool {
+	i := 0
+	j := 1
+	var result bool
+	modif_element := 0
+	if absInt(row[i]-row[j]) > 3 || absInt(row[i]-row[j]) < 1 {
+		return false
+	}
+	if row[i] < row[j] {
+		slice := row[j:]
+		result = checkIncreasingPt2(slice, modif_element)
+	} else if row[i] > row[j] {
+		slice := row[j:]
+		result = checkDecreasingPt2(slice, modif_element)
+	} else {
+		result = false
+	}
+	return result
+}
+
 func main() {
 
 	// Example usage
@@ -112,6 +167,7 @@ func main() {
 		return
 	}
 
+	// part 1
 	var safeCounter = 0
 	for _, row := range matrix {
 		val := checkSafety(row)
@@ -120,4 +176,15 @@ func main() {
 		}
 	}
 	fmt.Printf("Total number of safe reports: %v\n", safeCounter)
+
+	//part 2
+	var safe_pt2 = 0
+	for _, row := range matrix {
+		val := checkSafetyPt2(row)
+		if val {
+			safeCounter += 1
+		}
+	}
+	fmt.Printf("Total number of safe reports, part 2: %v\n", safe_pt2)
+
 }
