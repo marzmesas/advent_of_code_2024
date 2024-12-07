@@ -103,60 +103,56 @@ func checkSafety(row []int) bool {
 	return result
 }
 
-//part 2
-
-func checkIncreasingPt2(row []int, modif_element int) bool {
+// part 2
+// Check if the row is safe in the given mode (increasing or decreasing)
+func isSafe(row []int, mode string) bool {
 	for i := 0; i < len(row)-1; i++ {
-		j := i + 1
-		if (absInt(row[i]-row[j]) > 3 && modif_element == 1) || (absInt(row[i]-row[j]) < 1 && modif_element == 1) {
+		diff := row[i+1] - row[i]
+		if absInt(diff) < 1 || absInt(diff) > 3 {
 			return false
-		} else if (absInt(row[i]-row[j]) > 3 && modif_element == 0) || (absInt(row[i]-row[j]) < 1 && modif_element == 0) {
-			modif_element += 1
-		} else if row[j] < row[i] && modif_element == 1 {
-			return false
-		} else if row[j] < row[i] && modif_element == 0 {
-			modif_element += 1
 		}
-
+		if (mode == "increasing" && diff < 0) || (mode == "decreasing" && diff > 0) {
+			return false
+		}
 	}
 	return true
 }
 
-func checkDecreasingPt2(row []int, modif_element int) bool {
+// Check if a row can be made safe by removing one element
+func canBeMadeSafe(row []int) bool {
+	for i := 0; i < len(row); i++ {
+		// Create a new slice excluding the current element (ensure no accidental modification)
+		newRow := make([]int, len(row)-1)
+		copy(newRow[:i], row[:i])
+		copy(newRow[i:], row[i+1:])
 
-	for i := 0; i < len(row)-1; i++ {
-		j := i + 1
-		if absInt(row[i]-row[j]) > 3 || absInt(row[i]-row[j]) < 1 {
-			return false
+		if isSafe(newRow, "increasing") || isSafe(newRow, "decreasing") {
+			fmt.Printf("Row %v becomes safe by removing index %d: %v\n", row, i, newRow)
+			return true
 		}
-		if row[j] > row[i] {
-			return false
-		}
-
 	}
-	return true
+	return false
 }
 
-func checkSafetyPt2(row []int) bool {
-	i := 0
-	j := 1
-	var result bool
-	modif_element := 0
-	if absInt(row[i]-row[j]) > 3 || absInt(row[i]-row[j]) < 1 {
-		return false
+// Main safety check function
+func checkSafetyTwoPointer(row []int) bool {
+	fmt.Printf("Checking row: %v\n", row)
+	// First check if the row is safe as-is
+	if isSafe(row, "increasing") || isSafe(row, "decreasing") {
+		fmt.Printf("Row %v is safe as-is\n", row)
+		return true
 	}
-	if row[i] < row[j] {
-		slice := row[j:]
-		result = checkIncreasingPt2(slice, modif_element)
-	} else if row[i] > row[j] {
-		slice := row[j:]
-		result = checkDecreasingPt2(slice, modif_element)
-	} else {
-		result = false
+	// If not safe, check if it can be made safe by removing one element
+	if canBeMadeSafe(row) {
+		fmt.Printf("Row %v can be made safe by removing one element\n", row)
+		return true
 	}
-	return result
+	// Otherwise, the row is unsafe
+	fmt.Printf("Row %v is unsafe\n", row)
+	return false
 }
 
+// Main function
 func main() {
 
 	// Example usage
@@ -177,14 +173,11 @@ func main() {
 	}
 	fmt.Printf("Total number of safe reports: %v\n", safeCounter)
 
-	//part 2
-	var safe_pt2 = 0
+	safeCount := 0
 	for _, row := range matrix {
-		val := checkSafetyPt2(row)
-		if val {
-			safeCounter += 1
+		if checkSafetyTwoPointer(row) {
+			safeCount++
 		}
 	}
-	fmt.Printf("Total number of safe reports, part 2: %v\n", safe_pt2)
-
+	fmt.Printf("Total number of safe reports, part2: %v\n", safeCount)
 }
