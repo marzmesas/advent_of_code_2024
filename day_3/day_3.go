@@ -47,6 +47,51 @@ func computeMulResults(input string) int {
 	return result
 }
 
+func processMulInstructions(input string) int {
+	// Regex patterns for mul(num1,num2), do(), and don't()
+	mulPattern := `mul\((\d+),(\d+)\)`
+	doPattern := `do\(\)`
+	dontPattern := `don't\(\)`
+
+	// Compile regexes
+	mulRegex := regexp.MustCompile(mulPattern)
+	doRegex := regexp.MustCompile(doPattern)
+	dontRegex := regexp.MustCompile(dontPattern)
+
+	// Track whether mul operations are enabled
+	mulEnabled := true
+
+	// Map to store results of executed mul operations
+	result := 0
+
+	// Match all instructions (both mul and do/don't)
+	allInstructions := regexp.MustCompile(fmt.Sprintf(`%s|%s|%s`, mulPattern, doPattern, dontPattern))
+	matches := allInstructions.FindAllStringSubmatch(input, -1)
+
+	// Iterate through all matched instructions in order
+	for _, match := range matches {
+		fullMatch := match[0] // Full matched string
+
+		switch {
+		case doRegex.MatchString(fullMatch): // Handle do()
+			mulEnabled = true
+
+		case dontRegex.MatchString(fullMatch): // Handle don't()
+			mulEnabled = false
+
+		case mulRegex.MatchString(fullMatch): // Handle mul(num1,num2)
+			if mulEnabled {
+				// Extract the numbers and compute the result
+				num1, _ := strconv.Atoi(match[1])
+				num2, _ := strconv.Atoi(match[2])
+				result += num1 * num2
+			}
+		}
+	}
+
+	return result
+}
+
 func main() {
 	// Specify the input file
 	filename := "day_3/input.txt"
@@ -62,4 +107,7 @@ func main() {
 	result := computeMulResults(content)
 	fmt.Println(result)
 
+	//part 2
+	result2 := processMulInstructions(content)
+	fmt.Printf("Part 2: %v\n", result2)
 }
