@@ -40,8 +40,59 @@ func readMatrix(filePath string) ([][]rune, error) {
 	return matrix, nil
 }
 
+func countWordOccurrences(matrix [][]rune, word string) int {
+	wordLen := len(word)
+	directions := [][2]int{
+		{-1, 0},  // Up
+		{1, 0},   // Down
+		{0, -1},  // Left
+		{0, 1},   // Right
+		{-1, -1}, // Up-Left
+		{-1, 1},  // Up-Right
+		{1, -1},  // Down-Left
+		{1, 1},   // Down-Right
+	}
+
+	// Helper function to check if the word exists starting at (row, col) in the given direction
+	isWordAt := func(row, col, dirX, dirY int) bool {
+		for i := 0; i < wordLen; i++ {
+			newRow := row + i*dirX
+			newCol := col + i*dirY
+
+			// Check bounds
+			if newRow < 0 || newRow >= len(matrix) || newCol < 0 || newCol >= len(matrix[0]) {
+				return false
+			}
+
+			// Check character match
+			if matrix[newRow][newCol] != rune(word[i]) {
+				return false
+			}
+		}
+		return true
+	}
+
+	count := 0
+
+	// Traverse the entire matrix
+	for row := 0; row < len(matrix); row++ {
+		for col := 0; col < len(matrix[0]); col++ {
+			// Check all 8 directions
+			for _, dir := range directions {
+				if isWordAt(row, col, dir[0], dir[1]) {
+					count++
+				}
+			}
+		}
+	}
+
+	return count
+}
+
 func main() {
 	matrix, _ := readMatrix("day_4/input.txt")
-	fmt.Println(string(matrix[0]))
+	word := "XMAS"
+	count := countWordOccurrences(matrix, word)
+	fmt.Printf("The word %q appears %d times in the matrix.\n", word, count)
 
 }
