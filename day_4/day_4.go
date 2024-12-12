@@ -89,10 +89,54 @@ func countWordOccurrences(matrix [][]rune, word string) int {
 	return count
 }
 
+func countXMASShapes(matrix [][]rune) int {
+	count := 0
+	rows := len(matrix)
+	cols := len(matrix[0])
+
+	// Helper function to check boundaries
+	isValid := func(row, col int) bool {
+		return row >= 0 && row < rows && col >= 0 && col < cols
+	}
+
+	// Helper function to check a diagonal pattern
+	checkDiagonal := func(row, col, dRow1, dCol1, dRow2, dCol2 int) bool {
+		// Check first diagonal (M->A->S or S->A->M)
+		firstM := isValid(row+dRow1, col+dCol1) && matrix[row+dRow1][col+dCol1] == 'M'
+		firstS := isValid(row+dRow1, col+dCol1) && matrix[row+dRow1][col+dCol1] == 'S'
+		secondM := isValid(row+dRow2, col+dCol2) && matrix[row+dRow2][col+dCol2] == 'M'
+		secondS := isValid(row+dRow2, col+dCol2) && matrix[row+dRow2][col+dCol2] == 'S'
+
+		return (firstM && secondS) || (firstS && secondM)
+	}
+
+	// Traverse the matrix
+	for row := 0; row < rows; row++ {
+		for col := 0; col < cols; col++ {
+			// Check if 'A' is at the center of an X shape
+			if matrix[row][col] == 'A' {
+				// Check both diagonals for valid patterns
+				if checkDiagonal(row, col, -1, -1, 1, 1) && // Top-Left to Bottom-Right
+					checkDiagonal(row, col, -1, 1, 1, -1) { // Top-Right to Bottom-Left
+					count++
+				}
+			}
+		}
+	}
+
+	return count
+}
+
 func main() {
 	matrix, _ := readMatrix("day_4/input.txt")
 	word := "XMAS"
+
+	// part 1
+
 	count := countWordOccurrences(matrix, word)
 	fmt.Printf("The word %q appears %d times in the matrix.\n", word, count)
 
+	// part 2
+	count2 := countXMASShapes(matrix)
+	fmt.Printf("The X-MAS shapes found: %d\n", count2)
 }
